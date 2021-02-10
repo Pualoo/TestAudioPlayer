@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:test_audio_player/logic/cubits/app/app_cubit.dart';
 
 part 'app_state.dart';
 
@@ -16,6 +15,15 @@ class AppCubit extends Cubit<AppState> {
   void nextMusic() =>
       emit(AppState(musicName: getNextMusic(listMusic, state.musicName)));
 
+  void previousMusic() =>
+      emit(AppState(musicName: getPreviousMusic(listMusic, state.musicName)));
+
+  void setMusic(String music) => emit(AppState(musicName: music));
+
+  List<String> getListMusic() {
+    return listMusic;
+  }
+
   String getNextMusic(List<String> listMusic, String musicName) {
     for (var i = 0; i < listMusic.length; i++) {
       if (listMusic[i] == musicName) {
@@ -23,6 +31,19 @@ class AppCubit extends Cubit<AppState> {
           return listMusic.first;
         } else {
           return listMusic[i + 1];
+        }
+      }
+    }
+    return listMusic.first;
+  }
+
+  String getPreviousMusic(List<String> listMusic, String musicName) {
+    for (var i = 0; i < listMusic.length; i++) {
+      if (listMusic[i] == musicName) {
+        if (listMusic[i] == listMusic.first) {
+          return listMusic.last;
+        } else {
+          return listMusic[i - 1];
         }
       }
     }

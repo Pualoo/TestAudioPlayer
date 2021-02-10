@@ -9,50 +9,57 @@ class MusicPlayer extends StatefulWidget {
 }
 
 class _MusicPlayerState extends State<MusicPlayer> {
-  double _currentSliderValue = 0;
-
   @override
   Widget build(BuildContext context) {
-    var playerCubit = BlocProvider.of<PlayerCubit>(context);
     var appCubit = BlocProvider.of<AppCubit>(context);
+    var playerCubit = BlocProvider.of<PlayerCubit>(context);
     return Container(
-      child: Column(
-        children: [
-          Slider(
-            value: _currentSliderValue,
-            min: 0,
-            max: 100,
-            divisions: 60,
-            label: _currentSliderValue.round().toString(),
-            onChanged: (double value) {
-              setState(() {
-                _currentSliderValue = value;
-              });
-            },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: BlocBuilder<PlayerCubit, PlayerState>(
+        builder: (context, state) {
+          return Column(
             children: [
-              FloatingActionButton(
-                onPressed: () {},
-                tooltip: 'forward',
-                child: Icon(Icons.fast_rewind),
-              ),
-              FloatingActionButton(
-                onPressed: () {},
-                tooltip: 'play',
-                child: Icon(Icons.play_arrow),
-              ),
-              FloatingActionButton(
-                onPressed: () {
-                  appCubit.nextMusic();
+              Text(state.timeMusic.toStringAsPrecision(3) + "%"),
+              Slider(
+                value: state.timeMusic,
+                min: 0,
+                max: 100,
+                divisions: 100,
+                label: state.timeMusic.round().toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    state.timeMusic = value;
+                  });
                 },
-                tooltip: 'forward',
-                child: Icon(Icons.fast_forward),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  FloatingActionButton(
+                    onPressed: () {
+                      appCubit.previousMusic();
+                      playerCubit.resetPlayer();
+                    },
+                    tooltip: 'forward',
+                    child: Icon(Icons.fast_rewind),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {},
+                    tooltip: 'play',
+                    child: Icon(Icons.play_arrow),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      appCubit.nextMusic();
+                      playerCubit.resetPlayer();
+                    },
+                    tooltip: 'forward',
+                    child: Icon(Icons.fast_forward),
+                  ),
+                ],
+              )
             ],
-          )
-        ],
+          );
+        },
       ),
     );
   }
